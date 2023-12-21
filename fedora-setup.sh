@@ -31,23 +31,32 @@ read sudo_passwd
 # mkdir -p $HOME/.config/alacritty/
 # git clone "$mygit/alacritty-config" $alacritty_config
 # 
+# i3 windows manager install and config
+# `arandr` - monitor config small app
+# echo $sudo_passwd | sudo -S yum install -y i3 arandr
+# 
 # # dev setup
 # dnf install -y neovim git make python3-pip npm cargo gcc-c++  
 # dnf copr enable atim/lazygit
 # dnf install lazygit
 # 
 # LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
+
+# clone my config to lvim config dir. it is not empty, so do git init first
+pushd $config_dir/lvim
+  git init
+  git remote add origin $mygit/lvim-config
+  git fetch
+  git reset origin/main  # Required when the versioned files existed in path before "git init" of this repo.
+  git checkout -t origin/main -f
+popd
 # 
 # # nerd fonts (for lunarvim)
 # # Go mono font https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Go-Mono
-# wget https://go.googlesource.com/image/+/master/font/gofont/ttfs/Go-Mono.ttf
-# wget https://go.googlesource.com/image/+/master/font/gofont/ttfs/Go-Mono-Italic.ttf
-# wget https://go.googlesource.com/image/+/master/font/gofont/ttfs/Go-Mono-Bold.ttf
-# wget https://go.googlesource.com/image/+/master/font/gofont/ttfs/Go-Mono-Bold-Italic.ttf
-wget -P $home_dir/Downloads https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Go-Mono/Regular/GoMonoNerdFontMono-Regular.ttf
-wget -P $home_dir/Downloads https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Go-Mono/Bold/GoMonoNerdFontMono-Bold.ttf
-wget -P $home_dir/Downloads https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Go-Mono/Italic/GoMonoNerdFontMono-Italic.ttf
-wget -P $home_dir/Downloads https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Go-Mono/Bold-Italic/GoMonoNerdFontMono-BoldItalic.ttf
+# wget -P $home_dir/Downloads https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Go-Mono/Regular/GoMonoNerdFontMono-Regular.ttf
+# wget -P $home_dir/Downloads https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Go-Mono/Bold/GoMonoNerdFontMono-Bold.ttf
+# wget -P $home_dir/Downloads https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Go-Mono/Italic/GoMonoNerdFontMono-Italic.ttf
+# wget -P $home_dir/Downloads https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Go-Mono/Bold-Italic/GoMonoNerdFontMono-BoldItalic.ttf
 # 
 # font_system_dir="/usr/share/fonts"
 # echo $sudo_passwd | sudo -S mkdir $font_system_dir/GoMonoNerdFontMono
@@ -61,3 +70,13 @@ wget -P $home_dir/Downloads https://github.com/ryanoasis/nerd-fonts/raw/master/p
 # echo $sudo_passwd | sudo -S fc-cache -v
 
 echo "FINISHED!"
+
+
+# quiet pushd, popd with no stack output
+pushd() {
+  command pushd "$@" > /dev/null
+}
+
+popd() {
+  command popd "$@" > /dev/null
+}
