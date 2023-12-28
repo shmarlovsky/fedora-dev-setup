@@ -3,30 +3,37 @@ echo "Fedora auto setup script"
 
 mygit="https://github.com/shmarlovsky"
 home_dir=$HOME
+zsh_config=$home_dir
 config_dir="$home_dir/.config"
 alacritty_config="$config_dir/alacritty"
-zsh_config=$home_dir
+tmux_config="$config_dir/tmux"
 
 # for testing
 echo "ENV:"
 echo "Home: $home_dir"
 echo "Config: $config_dir"
 echo "Alacritty dir: $alacritty_config"
+echo "Tmux dir: $tmux_config"
 
-# TODO: ask for sudo passwd
 echo "Enter sudo password (needed for installing packages):"
 read sudo_passwd
 
+# TODO: move echo sudo ... to separate function
 # git config
 # https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/credstores.md#gpgpass-compatible-files
-dnf install -y pass git-credential-oauth
+echo $sudo_passwd | sudo -S dnf install -y pass git-credential-oauth
 
 # shell install and config
-dnf install -y zsh
+echo $sudo_passwd | sudo -S dnf install -y zsh
 git clone "$mygit/zsh-config" $zsh_config
+# tmux and plugin manager
+echo $sudo_passwd | sudo -S dnf install tmux
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+git clone "$mygit/tmux-config" $tmux_config
 
 # terminal install and config
-dnf -y install alacritty tmux
+echo $sudo_passwd | sudo -S dnf -y install alacritty tmux
 mkdir -p $HOME/.config/alacritty/
 git clone "$mygit/alacritty-config" $alacritty_config
 
@@ -35,12 +42,12 @@ git clone "$mygit/alacritty-config" $alacritty_config
 # `lxappearance` - system font, theme, etc
 # `rofi` - alternative launcher
 # `i3blocks` - alternative bar
-echo $sudo_passwd | sudo -S yum install -y i3 arandr lxappearance rofi i3blocks
+echo $sudo_passwd | sudo -S dnf install -y i3 arandr lxappearance rofi i3blocks
 
 # dev setup
-dnf install -y neovim git make python3-pip npm cargo gcc-c++  
-dnf copr enable atim/lazygit
-dnf install lazygit
+echo $sudo_passwd | sudo -S dnf install -y neovim git make python3-pip npm cargo gcc-c++  
+echo $sudo_passwd | sudo -S dnf copr enable atim/lazygit
+echo $sudo_passwd | sudo -S dnf install lazygit
 
 LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
 
